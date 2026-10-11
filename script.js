@@ -51,27 +51,35 @@ function displayAnimals(animalArray) {
 		return;
 	}
 
-	/*
-	 * TODO #1: Display the animal cards.
-	 *
-	 * Use forEach() to loop through animalArray. For each animal:
-	 *
-	 * 1. Create an element for the card and add the "animal-card" class.
-	 * 2. If the animal is adopted, also add the "adopted" class.
-	 * 3. Create elements showing its name, species, age, and status
-	 *    ("Available" or "Adopted").
-	 * 4. Create a button labeled "Adopt" or "Return".
-	 * 5. Add a click listener to the button. Its callback should call
-	 *    toggleAdoption() and pass the animal's id.
-	 * 6. Append the completed card to animalList.
-	 *
-	 * Required comment: above your click listener, explain in your own words
-	 * WHEN its callback runs, and HOW it knows which animal to change.
-	 *
-	 * Note: When this TODO is complete, the eight cards will appear when you
-	 * refresh the page. Clicking the buttons won't do anything yet. They
-	 * start working after TODOs #2 and #3 are complete.
-	 */
+	// Rebuild each card from the current data so its status and button agree.
+	animalArray.forEach((animal) => {
+		const card = document.createElement("div");
+		card.classList.add("animal-card");
+		if (animal.adopted) {
+			card.classList.add("adopted");
+		}
+
+		const name = document.createElement("h3");
+		name.textContent = animal.name;
+		const species = document.createElement("p");
+		species.textContent = "Species: " + animal.species;
+		const age = document.createElement("p");
+		age.textContent = "Age: " + animal.age + " years";
+		const status = document.createElement("p");
+		status.textContent = animal.adopted ? "Adopted" : "Available";
+		const button = document.createElement("button");
+		button.type = "button";
+		button.textContent = animal.adopted ? "Return" : "Adopt";
+
+		// This callback runs when the user clicks, not while the card is built.
+		// Its closure remembers this animal, so it passes the right id later.
+		button.addEventListener("click", () => {
+			toggleAdoption(animal.id);
+		});
+
+		card.append(name, species, age, status, button);
+		animalList.appendChild(card);
+	});
 }
 
 // ------------------------------------
