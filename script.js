@@ -87,18 +87,16 @@ function displayAnimals(animalArray) {
 // ------------------------------------
 
 function toggleAdoption(animalId) {
-	/*
-	 * TODO #2: Toggle the animal's adoption status.
-	 *
-	 * 1. Use find() to locate the animal whose id matches animalId.
-	 * 2. If there is no matching animal, return from the function.
-	 * 3. Change adopted to the opposite of its current value.
-	 * 4. Call updateDisplay() to redraw the current view.
-	 *
-	 * Note: updateDisplay() is empty until you complete TODO #3. Until then,
-	 * clicking a button changes the animal's adopted value, but the page
-	 * won't redraw, so it will look like nothing happened.
-	 */
+	// Find by id because a card's position can change when the list is sorted.
+	const animal = animals.find((animal) => animal.id === animalId);
+	if (!animal) {
+		return;
+	}
+
+	// Flipping the same value handles both adoption and return. Redrawing
+	// keeps the card in sync with the data and the current filter.
+	animal.adopted = !animal.adopted;
+	updateDisplay();
 }
 
 // ------------------------------------
@@ -106,26 +104,26 @@ function toggleAdoption(animalId) {
 // ------------------------------------
 
 function updateDisplay() {
-	/*
-	 * TODO #3: Prepare the animals the user wants to see.
-	 *
-	 * 1. Begin with a copy of the animals array (use slice()).
-	 * 2. If activeFilter is "available", use filter() to keep animals
-	 *    whose adopted value is false.
-	 * 3. If activeFilter is "adopted", use filter() to keep animals
-	 *    whose adopted value is true.
-	 * 4. If activeSort is "name", sort the result alphabetically by name.
-	 * 5. If activeSort is "age", sort the result from youngest to oldest.
-	 * 6. Pass the finished array to displayAnimals().
-	 * 7. Call updateCount().
-	 *
-	 * Required comment: explain in your own words why you sort a copy
-	 * instead of sorting the animals array itself.
-	 *
-	 * Note: When this TODO is complete, the Adopt and Return buttons will
-	 * work. The filter buttons and sort menu won't do anything until TODO #5
-	 * is complete, because nothing changes activeFilter or activeSort yet.
-	 */
+	// sort() changes its array. Sorting a copy preserves the shelter's
+	// original order so the user can switch back to it later.
+	let visibleAnimals = animals.slice();
+
+	// Keep only animals that match the selected adoption status.
+	if (activeFilter === "available") {
+		visibleAnimals = visibleAnimals.filter((animal) => !animal.adopted);
+	} else if (activeFilter === "adopted") {
+		visibleAnimals = visibleAnimals.filter((animal) => animal.adopted);
+	}
+
+	if (activeSort === "name") {
+		visibleAnimals.sort((a, b) => a.name.localeCompare(b.name));
+	} else if (activeSort === "age") {
+		visibleAnimals.sort((a, b) => a.age - b.age);
+	}
+
+	// Use the same redraw path after a data change or a control change.
+	displayAnimals(visibleAnimals);
+	updateCount();
 }
 
 // ------------------------------------
